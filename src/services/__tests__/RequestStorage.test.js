@@ -25,7 +25,7 @@ describe('RequestStorage', () => {
   describe('storeRequest', () => {
     it('should store a valid request and return it with ID and timestamp', () => {
       const result = RequestStorage.storeRequest(validRequestData);
-      
+
       expect(result).toHaveProperty('id');
       expect(result).toHaveProperty('timestamp');
       expect(result.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
@@ -38,71 +38,71 @@ describe('RequestStorage', () => {
     it('should throw error for missing originalImage', () => {
       const invalidData = { ...validRequestData };
       delete invalidData.originalImage;
-      
+
       expect(() => RequestStorage.storeRequest(invalidData))
-        .toThrow('Validation failed: originalImage is required and must be a string');
+        .toThrow('Validation failed: Either originalImage or originalText must be provided');
     });
 
     it('should throw error for missing customText', () => {
       const invalidData = { ...validRequestData };
       delete invalidData.customText;
-      
+
       expect(() => RequestStorage.storeRequest(invalidData))
         .toThrow('Validation failed: customText is required and must be a string');
     });
 
     it('should throw error for customText exceeding 100 characters', () => {
-      const invalidData = { 
-        ...validRequestData, 
-        customText: 'a'.repeat(101) 
+      const invalidData = {
+        ...validRequestData,
+        customText: 'a'.repeat(101)
       };
-      
+
       expect(() => RequestStorage.storeRequest(invalidData))
         .toThrow('customText must not exceed 100 characters');
     });
 
     it('should throw error for invalid textPosition', () => {
-      const invalidData = { 
-        ...validRequestData, 
-        textPosition: { x: -1, y: 101 } 
+      const invalidData = {
+        ...validRequestData,
+        textPosition: { x: -1, y: 101 }
       };
-      
+
       expect(() => RequestStorage.storeRequest(invalidData))
         .toThrow('textPosition must be an object with x and y coordinates (0-100)');
     });
 
     it('should throw error for invalid fontSize', () => {
-      const invalidData = { 
-        ...validRequestData, 
-        fontSize: 5 
+      const invalidData = {
+        ...validRequestData,
+        fontSize: 5
       };
-      
+
       expect(() => RequestStorage.storeRequest(invalidData))
         .toThrow('fontSize must be a number between 12 and 72');
     });
 
     it('should throw error for missing customer name', () => {
-      const invalidData = { 
-        ...validRequestData, 
-        customerInfo: { 
-          ...validRequestData.customerInfo, 
-          name: '' 
-        } 
+      const invalidData = {
+        ...validRequestData,
+        customerInfo: {
+          ...validRequestData.customerInfo,
+          name: ''
+        }
       };
-      
+
       expect(() => RequestStorage.storeRequest(invalidData))
         .toThrow('customerInfo.name is required');
     });
 
     it('should throw error for invalid email', () => {
-      const invalidData = { 
-        ...validRequestData, 
-        customerInfo: { 
-          ...validRequestData.customerInfo, 
-          email: 'invalid-email' 
-        } 
+      const invalidData = {
+        ...validRequestData,
+        customerInfo: {
+          ...validRequestData.customerInfo,
+          email: 'invalid-email'
+        }
       };
-      
+
       expect(() => RequestStorage.storeRequest(invalidData))
         .toThrow('customerInfo.email is required and must be a valid email');
     });
@@ -111,17 +111,17 @@ describe('RequestStorage', () => {
       // Mock the MAX_REQUESTS to a small number for testing
       const originalMax = RequestStorage.MAX_REQUESTS;
       RequestStorage.MAX_REQUESTS = 2;
-      
+
       try {
         RequestStorage.storeRequest(validRequestData);
-        RequestStorage.storeRequest({ 
-          ...validRequestData, 
-          customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' } 
+        RequestStorage.storeRequest({
+          ...validRequestData,
+          customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' }
         });
-        
-        expect(() => RequestStorage.storeRequest({ 
-          ...validRequestData, 
-          customerInfo: { ...validRequestData.customerInfo, email: 'test3@example.com' } 
+
+        expect(() => RequestStorage.storeRequest({
+          ...validRequestData,
+          customerInfo: { ...validRequestData.customerInfo, email: 'test3@example.com' }
         })).toThrow('Storage limit exceeded');
       } finally {
         RequestStorage.MAX_REQUESTS = originalMax;
@@ -130,19 +130,19 @@ describe('RequestStorage', () => {
 
     it('should detect duplicate submissions within 5 minutes', () => {
       RequestStorage.storeRequest(validRequestData);
-      
+
       expect(() => RequestStorage.storeRequest(validRequestData))
         .toThrow('Duplicate request detected');
     });
 
     it('should allow same customer to submit different requests', () => {
       RequestStorage.storeRequest(validRequestData);
-      
-      const differentRequest = { 
-        ...validRequestData, 
-        customText: 'Different Text' 
+
+      const differentRequest = {
+        ...validRequestData,
+        customText: 'Different Text'
       };
-      
+
       expect(() => RequestStorage.storeRequest(differentRequest))
         .not.toThrow();
     });
@@ -156,11 +156,11 @@ describe('RequestStorage', () => {
 
     it('should return all stored requests', () => {
       const request1 = RequestStorage.storeRequest(validRequestData);
-      const request2 = RequestStorage.storeRequest({ 
-        ...validRequestData, 
-        customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' } 
+      const request2 = RequestStorage.storeRequest({
+        ...validRequestData,
+        customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' }
       });
-      
+
       const requests = RequestStorage.getAllRequests();
       expect(requests).toHaveLength(2);
       expect(requests).toContainEqual(request1);
@@ -177,7 +177,7 @@ describe('RequestStorage', () => {
     it('should return the correct request for valid ID', () => {
       const storedRequest = RequestStorage.storeRequest(validRequestData);
       const retrievedRequest = RequestStorage.getRequestById(storedRequest.id);
-      
+
       expect(retrievedRequest).toEqual(storedRequest);
     });
   });
@@ -185,7 +185,7 @@ describe('RequestStorage', () => {
   describe('getRequestStats', () => {
     it('should return correct statistics for empty storage', () => {
       const stats = RequestStorage.getRequestStats();
-      
+
       expect(stats).toEqual({
         total: 0,
         recent: 0,
@@ -200,13 +200,13 @@ describe('RequestStorage', () => {
 
     it('should return correct statistics after storing requests', () => {
       const request1 = RequestStorage.storeRequest(validRequestData);
-      RequestStorage.storeRequest({ 
-        ...validRequestData, 
-        customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' } 
+      RequestStorage.storeRequest({
+        ...validRequestData,
+        customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' }
       });
-      
+
       const stats = RequestStorage.getRequestStats();
-      
+
       expect(stats.total).toBe(2);
       expect(stats.recent).toBe(2);
       expect(stats.byStatus.pending).toBe(2);
@@ -218,9 +218,9 @@ describe('RequestStorage', () => {
     it('should update request status successfully', () => {
       const request = RequestStorage.storeRequest(validRequestData);
       const result = RequestStorage.updateRequestStatus(request.id, 'processing');
-      
+
       expect(result).toBe(true);
-      
+
       const updatedRequest = RequestStorage.getRequestById(request.id);
       expect(updatedRequest.status).toBe('processing');
     });
@@ -232,7 +232,7 @@ describe('RequestStorage', () => {
 
     it('should throw error for invalid status', () => {
       const request = RequestStorage.storeRequest(validRequestData);
-      
+
       expect(() => RequestStorage.updateRequestStatus(request.id, 'invalid-status'))
         .toThrow('Invalid status. Must be: pending, processing, or completed');
     });
@@ -240,7 +240,7 @@ describe('RequestStorage', () => {
     it('should update status counts correctly', () => {
       const request = RequestStorage.storeRequest(validRequestData);
       RequestStorage.updateRequestStatus(request.id, 'completed');
-      
+
       const stats = RequestStorage.getRequestStats();
       expect(stats.byStatus.pending).toBe(0);
       expect(stats.byStatus.completed).toBe(1);
@@ -250,16 +250,16 @@ describe('RequestStorage', () => {
   describe('clearAll', () => {
     it('should clear all requests and reset metadata', () => {
       RequestStorage.storeRequest(validRequestData);
-      RequestStorage.storeRequest({ 
-        ...validRequestData, 
-        customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' } 
+      RequestStorage.storeRequest({
+        ...validRequestData,
+        customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' }
       });
-      
+
       RequestStorage.clearAll();
-      
+
       const requests = RequestStorage.getAllRequests();
       const stats = RequestStorage.getRequestStats();
-      
+
       expect(requests).toHaveLength(0);
       expect(stats.total).toBe(0);
       expect(stats.byStatus.pending).toBe(0);
@@ -269,14 +269,14 @@ describe('RequestStorage', () => {
   describe('cancelRequest', () => {
     it('should successfully cancel an existing request', () => {
       const storedRequest = RequestStorage.storeRequest(validRequestData);
-      
+
       // Verify request exists
       expect(RequestStorage.getRequestById(storedRequest.id)).toBeTruthy();
       expect(RequestStorage.getRequestStats().total).toBe(1);
-      
+
       // Cancel the request
       const result = RequestStorage.cancelRequest(storedRequest.id);
-      
+
       expect(result).toBe(true);
       expect(RequestStorage.getRequestById(storedRequest.id)).toBeNull();
       expect(RequestStorage.getRequestStats().total).toBe(0);
@@ -290,21 +290,21 @@ describe('RequestStorage', () => {
 
     it('should update metadata correctly when canceling requests', () => {
       const request1 = RequestStorage.storeRequest(validRequestData);
-      const request2 = RequestStorage.storeRequest({ 
-        ...validRequestData, 
-        customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' } 
+      const request2 = RequestStorage.storeRequest({
+        ...validRequestData,
+        customerInfo: { ...validRequestData.customerInfo, email: 'test2@example.com' }
       });
-      
+
       // Update one to processing
       RequestStorage.updateRequestStatus(request2.id, 'processing');
-      
+
       expect(RequestStorage.getRequestStats().total).toBe(2);
       expect(RequestStorage.getRequestStats().byStatus.pending).toBe(1);
       expect(RequestStorage.getRequestStats().byStatus.processing).toBe(1);
-      
+
       // Cancel the pending request
       RequestStorage.cancelRequest(request1.id);
-      
+
       expect(RequestStorage.getRequestStats().total).toBe(1);
       expect(RequestStorage.getRequestStats().byStatus.pending).toBe(0);
       expect(RequestStorage.getRequestStats().byStatus.processing).toBe(1);
@@ -314,7 +314,7 @@ describe('RequestStorage', () => {
   describe('modifyRequest', () => {
     it('should successfully modify an existing request', () => {
       const storedRequest = RequestStorage.storeRequest(validRequestData);
-      
+
       const updatedData = {
         ...validRequestData,
         customText: 'Modified Text',
@@ -322,9 +322,9 @@ describe('RequestStorage', () => {
         fontSize: 32,
         comments: 'Updated comments'
       };
-      
+
       const result = RequestStorage.modifyRequest(storedRequest.id, updatedData);
-      
+
       expect(result).toBeTruthy();
       expect(result.id).toBe(storedRequest.id);
       expect(result.timestamp).toEqual(storedRequest.timestamp);
@@ -342,7 +342,7 @@ describe('RequestStorage', () => {
 
     it('should validate updated data before modification', () => {
       const storedRequest = RequestStorage.storeRequest(validRequestData);
-      
+
       const invalidData = {
         ...validRequestData,
         customText: '', // Invalid - empty text
@@ -351,7 +351,7 @@ describe('RequestStorage', () => {
           email: 'invalid-email'
         }
       };
-      
+
       expect(() => {
         RequestStorage.modifyRequest(storedRequest.id, invalidData);
       }).toThrow('Validation failed');
@@ -359,19 +359,19 @@ describe('RequestStorage', () => {
 
     it('should reset status to pending when modified', () => {
       const storedRequest = RequestStorage.storeRequest(validRequestData);
-      
+
       // Update status to processing
       RequestStorage.updateRequestStatus(storedRequest.id, 'processing');
       expect(RequestStorage.getRequestById(storedRequest.id).status).toBe('processing');
-      
+
       // Modify the request
       const updatedData = {
         ...validRequestData,
         customText: 'Modified Text'
       };
-      
+
       const result = RequestStorage.modifyRequest(storedRequest.id, updatedData);
-      
+
       expect(result.status).toBe('pending');
       expect(RequestStorage.getRequestStats().byStatus.pending).toBe(1);
       expect(RequestStorage.getRequestStats().byStatus.processing).toBe(0);
@@ -379,17 +379,17 @@ describe('RequestStorage', () => {
 
     it('should preserve original ID and timestamp when modifying', () => {
       const storedRequest = RequestStorage.storeRequest(validRequestData);
-      
+
       const originalId = storedRequest.id;
       const originalTimestamp = storedRequest.timestamp;
-      
+
       const updatedData = {
         ...validRequestData,
         customText: 'Modified Text'
       };
-      
+
       const result = RequestStorage.modifyRequest(storedRequest.id, updatedData);
-      
+
       expect(result.id).toBe(originalId);
       expect(result.timestamp).toEqual(originalTimestamp);
     });
@@ -399,43 +399,43 @@ describe('RequestStorage', () => {
     it('should handle optional comments field', () => {
       const dataWithoutComments = { ...validRequestData };
       delete dataWithoutComments.comments;
-      
+
       const result = RequestStorage.storeRequest(dataWithoutComments);
       expect(result.comments).toBe('');
     });
 
     it('should handle optional phone field', () => {
-      const dataWithoutPhone = { 
+      const dataWithoutPhone = {
         ...validRequestData,
         customerInfo: {
           name: 'John Doe',
           email: 'john.doe@example.com'
         }
       };
-      
+
       const result = RequestStorage.storeRequest(dataWithoutPhone);
       expect(result.customerInfo.phone).toBeUndefined();
     });
 
     it('should validate comments length', () => {
-      const invalidData = { 
-        ...validRequestData, 
-        comments: 'a'.repeat(501) 
+      const invalidData = {
+        ...validRequestData,
+        comments: 'a'.repeat(501)
       };
-      
+
       expect(() => RequestStorage.storeRequest(invalidData))
         .toThrow('comments must be a string with maximum 500 characters');
     });
 
     it('should validate phone length', () => {
-      const invalidData = { 
+      const invalidData = {
         ...validRequestData,
         customerInfo: {
           ...validRequestData.customerInfo,
           phone: '1'.repeat(21)
         }
       };
-      
+
       expect(() => RequestStorage.storeRequest(invalidData))
         .toThrow('customerInfo.phone must be a string with maximum 20 characters');
     });

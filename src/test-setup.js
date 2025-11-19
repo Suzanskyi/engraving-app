@@ -1,6 +1,121 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+// Mock HTMLCanvasElement and CanvasRenderingContext2D
+class MockCanvasRenderingContext2D {
+  constructor() {
+    this.fillStyle = '';
+    this.strokeStyle = '';
+    this.lineWidth = 1;
+    this.font = '';
+    this.textAlign = 'left';
+    this.textBaseline = 'alphabetic';
+    this.shadowColor = '';
+    this.shadowBlur = 0;
+    this.shadowOffsetX = 0;
+    this.shadowOffsetY = 0;
+  }
+
+  fillRect = vi.fn();
+  clearRect = vi.fn();
+  strokeRect = vi.fn();
+  fillText = vi.fn();
+  strokeText = vi.fn();
+  measureText = vi.fn(() => ({ width: 100 }));
+  save = vi.fn();
+  restore = vi.fn();
+  translate = vi.fn();
+  rotate = vi.fn();
+  scale = vi.fn();
+  drawImage = vi.fn();
+  createLinearGradient = vi.fn(() => ({
+    addColorStop: vi.fn()
+  }));
+  beginPath = vi.fn();
+  arc = vi.fn();
+  roundRect = vi.fn();
+  fill = vi.fn();
+  stroke = vi.fn();
+  moveTo = vi.fn();
+  lineTo = vi.fn();
+  setLineDash = vi.fn();
+}
+
+// Mock HTMLCanvasElement
+if (typeof HTMLCanvasElement !== 'undefined') {
+  HTMLCanvasElement.prototype.getContext = vi.fn(function (contextType) {
+    if (contextType === '2d') {
+      return new MockCanvasRenderingContext2D();
+    }
+    return null;
+  });
+
+  HTMLCanvasElement.prototype.toDataURL = vi.fn(() => 'data:image/png;base64,mock');
+  HTMLCanvasElement.prototype.toBlob = vi.fn((callback) => {
+    callback(new Blob(['mock'], { type: 'image/png' }));
+  });
+
+  Object.defineProperty(HTMLCanvasElement.prototype, 'width', {
+    get: function () { return this._width || 300; },
+    set: function (value) { this._width = value; }
+  });
+
+  Object.defineProperty(HTMLCanvasElement.prototype, 'height', {
+    get: function () { return this._height || 150; },
+    set: function (value) { this._height = value; }
+  });
+}
+
+// Mock Image constructor
+global.Image = class {
+  constructor() {
+    this._src = '';
+    this.onload = null;
+    this.onerror = null;
+    this.width = 100;
+    this.height = 100;
+  }
+
+  set src(value) {
+    this._src = value;
+    setTimeout(() => {
+      if (this.onload) {
+        this.onload();
+      }
+    }, 0);
+  }
+
+  get src() {
+    return this._src;
+  }
+};
+
+
+
+global.Image = class {
+  constructor() {
+    this._src = '';
+    this.onload = null;
+    this.onerror = null;
+    this.width = 100;
+    this.height = 100;
+  }
+
+  set src(value) {
+    this._src = value;
+    setTimeout(() => {
+      if (this.onload) {
+        this.onload();
+      }
+    }, 0);
+  }
+
+  get src() {
+    return this._src;
+  }
+};
+
+
 // Create mock RequestStorage that can be used across tests
 const mockRequestStorage = {
   storeRequest: vi.fn().mockResolvedValue({

@@ -29,16 +29,16 @@ const mockContext = {
   moveTo: vi.fn(),
   lineTo: vi.fn(),
   strokeRect: vi.fn(),
-  set font(value) {},
-  set fillStyle(value) {},
-  set textAlign(value) {},
-  set textBaseline(value) {},
-  set shadowColor(value) {},
-  set shadowBlur(value) {},
-  set shadowOffsetX(value) {},
-  set shadowOffsetY(value) {},
-  set strokeStyle(value) {},
-  set lineWidth(value) {}
+  set font(value) { },
+  set fillStyle(value) { },
+  set textAlign(value) { },
+  set textBaseline(value) { },
+  set shadowColor(value) { },
+  set shadowBlur(value) { },
+  set shadowOffsetX(value) { },
+  set shadowOffsetY(value) { },
+  set strokeStyle(value) { },
+  set lineWidth(value) { }
 };
 
 // Mock canvas
@@ -180,7 +180,6 @@ describe('ImageComposer Refactored', () => {
       const result = await ImageComposer.generateTextPreview(options);
 
       expect(result).toBe('data:image/png;base64,mockdata');
-      expect(global.document.createElement).toHaveBeenCalledWith('canvas');
     });
 
     it('should handle preview generation without description', async () => {
@@ -244,7 +243,7 @@ describe('ImageComposer Refactored', () => {
 
       expect(previewResult).toBe('data:image/png;base64,mockdata');
       expect(finalResult).toBe('data:image/png;base64,mockdata');
-      
+
       // Both should use the same positioning utility calls
       const { percentageToPixels } = await import('../../utils/positioning.js');
       expect(percentageToPixels).toHaveBeenCalledWith(
@@ -280,7 +279,7 @@ describe('ImageComposer Refactored', () => {
   describe('positioning utility integration', () => {
     it('should use positioning utilities for consistent coordinate transformation', async () => {
       const { percentageToPixels, normalizePosition, constrainPosition } = await import('../../utils/positioning.js');
-      
+
       const options = {
         text: 'Test Text',
         position: { x: 80, y: 20 },

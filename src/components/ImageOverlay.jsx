@@ -1,18 +1,16 @@
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
 
 /**
- * Simplified Canvas-based TextOverlay component
+ * Canvas-based ImageOverlay component for positioning custom images on the base image
  */
-const TextOverlay = ({
-    imageUrl,
-    imageDescription,
-    text = '',
+const ImageOverlay = ({
+    baseImageUrl,
+    baseImageDescription,
+    overlayImageUrl = null,
     position = { x: 50, y: 50 },
-    font = 'Arial',
-    fontSize = 24,
-    color = '#333',
+    scale = 1,
     onPositionChange,
-    onFontSizeChange,
+    onScaleChange,
     width = 600,
     height = 400,
     className,
@@ -22,41 +20,57 @@ const TextOverlay = ({
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-    const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, fontSize: 0 });
+    const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, scale: 1 });
     const [isHovering, setIsHovering] = useState(false);
-    const [imageLoaded, setImageLoaded] = useState(false);
+    const [baseImageLoaded, setBaseImageLoaded] = useState(false);
+    const [overlayImageLoaded, setOverlayImageLoaded] = useState(false);
     const [animationFrame, setAnimationFrame] = useState(null);
-    
+
     // Animation state for smooth transitions
     const [animatedPosition, setAnimatedPosition] = useState(position);
-    const [animatedFontSize, setAnimatedFontSize] = useState(fontSize);
+    const [animatedScale, setAnimatedScale] = useState(scale);
     const [fadeOpacity, setFadeOpacity] = useState(1);
 
     // Smooth animation utilities
     const lerp = (start, end, factor) => start + (end - start) * factor;
 
-    // Cached image for smooth rendering
-    const cachedImage = useMemo(() => {
-        if (!imageUrl) return null;
-        
+    // Cached base image
+    const cachedBaseImage = useMemo(() => {
+        if (!baseImageUrl) return null;
+
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => {
-            setImageLoaded(true);
-            // Trigger a smooth fade-in
+            setBaseImageLoaded(true);
             setFadeOpacity(0);
             setTimeout(() => setFadeOpacity(1), 50);
         };
         img.onerror = () => {
-            setImageLoaded(false);
+            setBaseImageLoaded(false);
         };
-        img.src = imageUrl;
+        img.src = baseImageUrl;
         return img;
-    }, [imageUrl]);
-    
-    // Helper function to get image scaling information
-    const getImageScaling = useCallback(() => {
-        if (!imageUrl || !cachedImage || !imageLoaded) {
+    }, [baseImageUrl]);
+
+    // Cached overlay image
+    const cachedOverlayImage = useMemo(() => {
+        if (!overlayImageUrl) return null;
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            setOverlayImageLoaded(true);
+        };
+        img.onerror = () => {
+            setOverlayImageLoaded(false);
+        };
+        img.src = overlayImageUrl;
+        return img;
+    }, [overlayImageUrl]);
+
+    // Helper function to get base image scaling information
+    const getBaseImageScaling = useCallback(() => {
+        if (!baseImageUrl || !cachedBaseImage || !baseImageLoaded) {
             return {
                 drawWidth: width,
                 drawHeight: height,
@@ -66,7 +80,7 @@ const TextOverlay = ({
             };
         }
 
-        const imgAspectRatio = cachedImage.height / cachedImage.width;
+        const imgAspectRatio = cachedBaseImage.height / cachedBaseImage.width;
         const canvasAspectRatio = height / width;
 
         let drawWidth, drawHeight, offsetX, offsetY;
@@ -90,12 +104,12 @@ const TextOverlay = ({
             offsetY,
             isImage: true
         };
-    }, [imageUrl, cachedImage, imageLoaded, width, height]);
+    }, [baseImageUrl, cachedBaseImage, baseImageLoaded, width, height]);
 
     // Helper function to convert percentage position to pixel coordinates
     const getPixelPosition = useCallback((position) => {
-        const scaling = getImageScaling();
-        
+        const scaling = getBaseImageScaling();
+
         if (scaling.isImage) {
             return {
                 x: scaling.offsetX + (position.x / 100) * scaling.drawWidth,
@@ -107,12 +121,12 @@ const TextOverlay = ({
                 y: (position.y / 100) * height
             };
         }
-    }, [getImageScaling, width, height]);
+    }, [getBaseImageScaling, width, height]);
 
     // Helper function to convert mouse coordinates to percentage position
     const getPercentageFromMouse = useCallback((mouseX, mouseY) => {
-        const scaling = getImageScaling();
-        
+        const scaling = getBaseImageScaling();
+
         if (scaling.isImage) {
             return {
                 x: ((mouseX - scaling.offsetX) / scaling.drawWidth) * 100,
@@ -124,46 +138,46 @@ const TextOverlay = ({
                 y: (mouseY / height) * 100
             };
         }
-    }, [getImageScaling, width, height]);
-    
-    // Animate position and font size changes
+    }, [getBaseImageScaling, width, height]);
+
+    // Animate position and scale changes
     useEffect(() => {
         const animateChanges = () => {
             const positionDiff = Math.abs(animatedPosition.x - position.x) + Math.abs(animatedPosition.y - position.y);
-            const fontSizeDiff = Math.abs(animatedFontSize - fontSize);
-            
-            if (positionDiff > 0.1 || fontSizeDiff > 0.1) {
+            const scaleDiff = Math.abs(animatedScale - scale);
+
+            if (positionDiff > 0.1 || scaleDiff > 0.01) {
                 setAnimatedPosition(prev => ({
                     x: lerp(prev.x, position.x, 0.15),
                     y: lerp(prev.y, position.y, 0.15)
                 }));
-                setAnimatedFontSize(prev => lerp(prev, fontSize, 0.15));
-                
+                setAnimatedScale(prev => lerp(prev, scale, 0.15));
+
                 const frame = requestAnimationFrame(animateChanges);
                 setAnimationFrame(frame);
             } else {
                 setAnimatedPosition(position);
-                setAnimatedFontSize(fontSize);
+                setAnimatedScale(scale);
                 setAnimationFrame(null);
             }
         };
-        
+
         if (!isDragging && !isResizing) {
             animateChanges();
         } else {
             // Immediate updates during interaction
             setAnimatedPosition(position);
-            setAnimatedFontSize(fontSize);
+            setAnimatedScale(scale);
         }
-        
+
         return () => {
             if (animationFrame) {
                 cancelAnimationFrame(animationFrame);
             }
         };
-    }, [position, fontSize, isDragging, isResizing, animatedPosition, animatedFontSize, animationFrame]);
+    }, [position, scale, isDragging, isResizing, animatedPosition, animatedScale, animationFrame]);
 
-    // Optimized render function with smooth animations
+    // Optimized render function
     const render = useCallback(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -171,14 +185,13 @@ const TextOverlay = ({
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Clear canvas with smooth fade
+        // Clear canvas
         ctx.globalAlpha = fadeOpacity;
         ctx.clearRect(0, 0, width, height);
 
-        // Render background
-        if (imageUrl && cachedImage && imageLoaded) {
-            // Calculate dimensions to fit image
-            const imgAspectRatio = cachedImage.height / cachedImage.width;
+        // Render base image
+        if (baseImageUrl && cachedBaseImage && baseImageLoaded) {
+            const imgAspectRatio = cachedBaseImage.height / cachedBaseImage.width;
             const canvasAspectRatio = height / width;
 
             let drawWidth, drawHeight, offsetX, offsetY;
@@ -195,23 +208,25 @@ const TextOverlay = ({
                 offsetY = (height - drawHeight) / 2;
             }
 
-            ctx.drawImage(cachedImage, offsetX, offsetY, drawWidth, drawHeight);
-        } else if (imageDescription) {
+            ctx.drawImage(cachedBaseImage, offsetX, offsetY, drawWidth, drawHeight);
+        } else if (baseImageDescription) {
             renderPreview();
         } else {
             renderPlaceholder();
         }
-        
-        // Always render text
-        renderText();
-        
+
+        // Render overlay image
+        if (overlayImageUrl && cachedOverlayImage && overlayImageLoaded) {
+            renderOverlayImage();
+        }
+
         ctx.globalAlpha = 1;
 
         function renderPlaceholder() {
-            ctx.fillStyle = '#eef4f3';
+            ctx.fillStyle = '#f8f9fa';
             ctx.fillRect(0, 0, width, height);
             ctx.font = '16px Arial';
-            ctx.fillStyle = '#62727c';
+            ctx.fillStyle = '#999';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('Upload an image or provide a description', width / 2, height / 2);
@@ -219,108 +234,78 @@ const TextOverlay = ({
 
         function renderPreview() {
             const gradient = ctx.createLinearGradient(0, 0, width, height);
-            gradient.addColorStop(0, '#eef4f3');
-            gradient.addColorStop(1, '#f6e9d7');
+            gradient.addColorStop(0, '#f8f9fa');
+            gradient.addColorStop(1, '#e9ecef');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, width, height);
 
             // Simple object representation
-            ctx.strokeStyle = '#172033';
+            ctx.strokeStyle = '#333';
             ctx.lineWidth = 2;
             ctx.strokeRect(width * 0.2, height * 0.2, width * 0.6, height * 0.6);
         }
 
-        function renderText() {
-            if (!text || !text.trim()) return;
+        function renderOverlayImage() {
+            if (!cachedOverlayImage) return;
 
-            // Use helper function to get consistent pixel position
             const { x: pixelX, y: pixelY } = getPixelPosition(animatedPosition);
 
-            // Draw text background with animated font size
-            ctx.font = `${animatedFontSize}px ${font}`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+            // Calculate overlay image dimensions based on scale
+            const baseSize = 100; // Base size in pixels
+            const overlayWidth = baseSize * animatedScale;
+            const overlayHeight = (cachedOverlayImage.height / cachedOverlayImage.width) * overlayWidth;
 
-            const metrics = ctx.measureText(text);
-            const textWidth = metrics.width;
-            const textHeight = animatedFontSize;
+            const imgX = pixelX - overlayWidth / 2;
+            const imgY = pixelY - overlayHeight / 2;
 
-            const padding = 10;
-            const bgX = pixelX - textWidth / 2 - padding;
-            const bgY = pixelY - textHeight / 2 - padding;
-            const bgWidth = textWidth + padding * 2;
-            const bgHeight = textHeight + padding * 2;
+            // Draw overlay image
+            ctx.save();
 
-            // Smooth background color transitions
-            let bgColor = 'rgba(255, 255, 255, 0.78)';
-            let borderColor = 'rgba(23, 32, 51, 0.18)';
-            let borderWidth = 2;
-            
-            if (isDragging) {
-                bgColor = 'rgba(51, 214, 197, 0.28)';
-                borderColor = '#33d6c5';
-                borderWidth = 3;
-            } else if (isHovering) {
-                bgColor = 'rgba(255, 255, 255, 0.92)';
-                borderColor = '#ff5c75';
-                borderWidth = 2.5;
+            // Add shadow for better visibility
+            if (isDragging || isHovering) {
+                ctx.shadowColor = 'rgba(102, 126, 234, 0.4)';
+                ctx.shadowBlur = 10;
             }
 
-            // Smooth border animation
-            ctx.save();
-            ctx.shadowColor = 'rgba(23, 32, 51, 0.18)';
-            ctx.shadowBlur = isHovering || isDragging ? 8 : 0;
-            
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(bgX, bgY, bgWidth, bgHeight);
-
-            ctx.strokeStyle = borderColor;
-            ctx.lineWidth = borderWidth;
-            ctx.strokeRect(bgX, bgY, bgWidth, bgHeight);
+            ctx.drawImage(cachedOverlayImage, imgX, imgY, overlayWidth, overlayHeight);
             ctx.restore();
 
-            // Draw text with enhanced shadow for better visibility
-            ctx.save();
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
-            ctx.shadowBlur = 3;
-            ctx.shadowOffsetX = 1;
-            ctx.shadowOffsetY = 1;
-            
-            ctx.fillStyle = color;
-            ctx.fillText(text, pixelX, pixelY);
-            ctx.restore();
+            // Draw border around overlay when hovering or dragging
+            if (isHovering || isDragging) {
+                ctx.strokeStyle = isDragging ? '#667eea' : '#667eea';
+                ctx.lineWidth = isDragging ? 3 : 2;
+                ctx.strokeRect(imgX, imgY, overlayWidth, overlayHeight);
+            }
 
-            // Animated resize handle when hovering or resizing
+            // Draw resize handle
             if (isHovering || isResizing) {
-                const handleX = bgX + bgWidth - 8;
-                const handleY = bgY + bgHeight - 8;
+                const handleX = imgX + overlayWidth - 8;
+                const handleY = imgY + overlayHeight - 8;
                 const handleSize = 16;
-                
-                // Pulsing animation for resize handle
+
                 const pulseScale = isResizing ? 1.2 : (1 + Math.sin(Date.now() * 0.005) * 0.1);
                 const actualSize = handleSize * pulseScale;
 
                 ctx.save();
-                ctx.shadowColor = 'rgba(255, 92, 117, 0.36)';
+                ctx.shadowColor = 'rgba(102, 126, 234, 0.4)';
                 ctx.shadowBlur = 6;
-                
-                ctx.fillStyle = isResizing ? '#ff5c75' : '#33d6c5';
+
+                ctx.fillStyle = isResizing ? '#5a6fd8' : '#667eea';
                 ctx.beginPath();
                 ctx.arc(handleX, handleY, actualSize / 2, 0, 2 * Math.PI);
                 ctx.fill();
 
-                // Handle border with glow
                 ctx.strokeStyle = 'white';
                 ctx.lineWidth = 2;
                 ctx.stroke();
                 ctx.restore();
 
-                // Animated resize arrows
+                // Resize arrows
                 ctx.save();
                 ctx.strokeStyle = 'white';
                 ctx.lineWidth = 1.5;
                 ctx.lineCap = 'round';
-                
+
                 const arrowOffset = actualSize * 0.25;
                 ctx.beginPath();
                 ctx.moveTo(handleX - arrowOffset, handleY - arrowOffset * 0.5);
@@ -335,71 +320,65 @@ const TextOverlay = ({
                 ctx.restore();
             }
         }
-    }, [imageUrl, imageDescription, text, animatedPosition, font, animatedFontSize, color, width, height, isDragging, isResizing, isHovering, cachedImage, imageLoaded, fadeOpacity, getPixelPosition]);
+    }, [baseImageUrl, baseImageDescription, overlayImageUrl, animatedPosition, animatedScale, width, height, isDragging, isResizing, isHovering, cachedBaseImage, cachedOverlayImage, baseImageLoaded, overlayImageLoaded, fadeOpacity, getPixelPosition]);
 
-    // Get text bounds for hit testing (use animated values for smooth interaction)
-    const getTextBounds = useCallback(() => {
-        if (!text || !text.trim()) return null;
+    // Get overlay image bounds for hit testing
+    const getOverlayBounds = useCallback(() => {
+        if (!overlayImageUrl || !cachedOverlayImage || !overlayImageLoaded) return null;
 
-        // Use helper function to get consistent pixel position
         const { x: pixelX, y: pixelY } = getPixelPosition(animatedPosition);
 
-        const metrics = document.createElement('canvas').getContext('2d');
-        metrics.font = `${animatedFontSize}px ${font}`;
-        const textMetrics = metrics.measureText(text);
-        const textWidth = textMetrics.width;
-        const textHeight = animatedFontSize;
+        const baseSize = 100;
+        const overlayWidth = baseSize * animatedScale;
+        const overlayHeight = (cachedOverlayImage.height / cachedOverlayImage.width) * overlayWidth;
 
-        const padding = 10;
-        const bgX = pixelX - textWidth / 2 - padding;
-        const bgY = pixelY - textHeight / 2 - padding;
-        const bgWidth = textWidth + padding * 2;
-        const bgHeight = textHeight + padding * 2;
+        const imgX = pixelX - overlayWidth / 2;
+        const imgY = pixelY - overlayHeight / 2;
 
         return {
-            text: { x: bgX, y: bgY, width: bgWidth, height: bgHeight },
+            image: { x: imgX, y: imgY, width: overlayWidth, height: overlayHeight },
             resize: {
-                x: bgX + bgWidth - 16,
-                y: bgY + bgHeight - 16,
+                x: imgX + overlayWidth - 16,
+                y: imgY + overlayHeight - 16,
                 width: 16,
                 height: 16
             }
         };
-    }, [text, animatedPosition, font, animatedFontSize, getPixelPosition]);
+    }, [overlayImageUrl, cachedOverlayImage, overlayImageLoaded, animatedPosition, animatedScale, getPixelPosition]);
 
     // Mouse event handlers
     const handleMouseDown = useCallback((e) => {
         const canvas = canvasRef.current;
-        if (!canvas || !text) return;
+        if (!canvas || !overlayImageUrl) return;
 
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        const bounds = getTextBounds();
+        const bounds = getOverlayBounds();
         if (!bounds) return;
 
         // Check if clicking on resize handle
         if (x >= bounds.resize.x && x <= bounds.resize.x + bounds.resize.width &&
             y >= bounds.resize.y && y <= bounds.resize.y + bounds.resize.height) {
             setIsResizing(true);
-            setResizeStart({ x: e.clientX, y: e.clientY, fontSize });
+            setResizeStart({ x: e.clientX, y: e.clientY, scale });
             e.preventDefault();
             return;
         }
 
-        // Check if clicking on text area
-        if (x >= bounds.text.x && x <= bounds.text.x + bounds.text.width &&
-            y >= bounds.text.y && y <= bounds.text.y + bounds.text.height) {
+        // Check if clicking on overlay image
+        if (x >= bounds.image.x && x <= bounds.image.x + bounds.image.width &&
+            y >= bounds.image.y && y <= bounds.image.y + bounds.image.height) {
             setIsDragging(true);
             setDragStart({ x: e.clientX, y: e.clientY });
             e.preventDefault();
         }
-    }, [text, getTextBounds, fontSize]);
+    }, [overlayImageUrl, getOverlayBounds, scale]);
 
     const handleMouseMove = useCallback((e) => {
         const canvas = canvasRef.current;
-        if (!canvas || !text) return;
+        if (!canvas || !overlayImageUrl) return;
 
         if (isDragging) {
             const deltaX = e.clientX - dragStart.x;
@@ -409,10 +388,8 @@ const TextOverlay = ({
             const mouseX = (dragStart.x - rect.left + deltaX);
             const mouseY = (dragStart.y - rect.top + deltaY);
 
-            // Use helper function to convert mouse coordinates to percentage
             const { x: newX, y: newY } = getPercentageFromMouse(mouseX, mouseY);
 
-            // Constrain to bounds
             const constrainedX = Math.max(10, Math.min(90, newX));
             const constrainedY = Math.max(10, Math.min(90, newY));
 
@@ -427,10 +404,10 @@ const TextOverlay = ({
             const deltaY = e.clientY - resizeStart.y;
             const delta = Math.max(deltaX, deltaY);
 
-            const newSize = Math.max(12, Math.min(72, resizeStart.fontSize + delta / 2));
+            const newScale = Math.max(0.5, Math.min(3, resizeStart.scale + delta / 100));
 
-            if (onFontSizeChange) {
-                onFontSizeChange(newSize);
+            if (onScaleChange) {
+                onScaleChange(newScale);
             }
             return;
         }
@@ -440,33 +417,29 @@ const TextOverlay = ({
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        const bounds = getTextBounds();
+        const bounds = getOverlayBounds();
         if (!bounds) {
             setIsHovering(false);
             canvas.style.cursor = 'default';
             return;
         }
 
-        // Check if hovering over text or resize handle
-        const overText = x >= bounds.text.x && x <= bounds.text.x + bounds.text.width &&
-                        y >= bounds.text.y && y <= bounds.text.y + bounds.text.height;
+        const overImage = x >= bounds.image.x && x <= bounds.image.x + bounds.image.width &&
+            y >= bounds.image.y && y <= bounds.image.y + bounds.image.height;
         const overResize = x >= bounds.resize.x && x <= bounds.resize.x + bounds.resize.width &&
-                          y >= bounds.resize.y && y <= bounds.resize.y + bounds.resize.height;
+            y >= bounds.resize.y && y <= bounds.resize.y + bounds.resize.height;
 
         if (overResize) {
             setIsHovering(true);
             canvas.style.cursor = 'nw-resize';
-            canvas.style.transition = 'all 0.2s ease';
-        } else if (overText) {
+        } else if (overImage) {
             setIsHovering(true);
             canvas.style.cursor = 'move';
-            canvas.style.transition = 'all 0.2s ease';
         } else {
             setIsHovering(false);
             canvas.style.cursor = 'default';
-            canvas.style.transition = 'all 0.2s ease';
         }
-    }, [isDragging, isResizing, dragStart, resizeStart, text, getTextBounds, onPositionChange, onFontSizeChange, getPercentageFromMouse]);
+    }, [isDragging, isResizing, dragStart, resizeStart, overlayImageUrl, getOverlayBounds, onPositionChange, onScaleChange, getPercentageFromMouse]);
 
     const handleMouseUp = useCallback(() => {
         setIsDragging(false);
@@ -497,22 +470,22 @@ const TextOverlay = ({
         render();
     }, [render, width, height]);
 
-    // Debounced rendering to prevent excessive re-renders
+    // Debounced rendering
     useEffect(() => {
         let renderTimeout;
-        
+
         const debouncedRender = () => {
             clearTimeout(renderTimeout);
             renderTimeout = setTimeout(() => {
                 render();
-            }, 16); // ~60fps
+            }, 16);
         };
-        
+
         debouncedRender();
-        
+
         return () => clearTimeout(renderTimeout);
     }, [render]);
-    
+
     // Immediate render for interactions
     useEffect(() => {
         if (isDragging || isResizing || isHovering) {
@@ -538,7 +511,7 @@ const TextOverlay = ({
         };
     }, [handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave]);
 
-    // Global mouse up listener for drag operations
+    // Global mouse up listener
     useEffect(() => {
         if (isDragging || isResizing) {
             document.addEventListener('mouseup', handleMouseUp);
@@ -551,13 +524,13 @@ const TextOverlay = ({
             ref={canvasRef}
             className={className}
             style={{
-                border: `1px solid ${isHovering || isDragging || isResizing ? '#33d6c5' : 'rgba(255,255,255,0.58)'}`,
-                borderRadius: '18px',
-                background: 'rgba(255,255,255,0.72)',
+                border: `2px solid ${isHovering || isDragging || isResizing ? '#667eea' : '#e0e0e0'}`,
+                borderRadius: '12px',
+                background: 'white',
                 transition: 'all 0.3s ease',
-                boxShadow: isHovering || isDragging || isResizing 
-                    ? '0 22px 58px rgba(51, 214, 197, 0.18)' 
-                    : '0 18px 48px rgba(23, 32, 51, 0.12)',
+                boxShadow: isHovering || isDragging || isResizing
+                    ? '0 8px 25px rgba(102, 126, 234, 0.15)'
+                    : '0 2px 10px rgba(0, 0, 0, 0.1)',
                 transform: isDragging || isResizing ? 'scale(1.02)' : 'scale(1)',
                 ...style
             }}
@@ -565,4 +538,4 @@ const TextOverlay = ({
     );
 };
 
-export default TextOverlay;
+export default ImageOverlay;

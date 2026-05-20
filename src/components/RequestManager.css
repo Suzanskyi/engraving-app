@@ -4,11 +4,15 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: white;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255, 184, 77, 0.30), transparent 28%),
+    radial-gradient(circle at 92% 12%, rgba(51, 214, 197, 0.28), transparent 30%),
+    linear-gradient(135deg, #151a2e 0%, #23404b 52%, #20263d 100%);
   z-index: 1000;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  color: #172033;
 }
 
 .request-manager-header {
@@ -16,13 +20,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  border-bottom: 1px solid #e0e0e0;
-  background: #f8f9fa;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(12, 18, 32, 0.42);
+  backdrop-filter: blur(24px) saturate(170%);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.16);
 }
 
 .request-manager-header h2 {
   margin: 0;
-  color: #333;
+  color: white;
 }
 
 .header-actions {
@@ -32,18 +38,21 @@
 }
 
 .back-btn, .refresh-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 4px;
+  padding: 0.62rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s ease;
+  backdrop-filter: blur(14px);
 }
 
 .back-btn:hover, .refresh-btn:hover {
-  background: #f0f0f0;
-  border-color: #ccc;
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.44);
+  transform: translateY(-1px);
 }
 
 .refresh-btn:disabled {
@@ -71,9 +80,9 @@
 
 /* Error and Loading States */
 .error-message {
-  background: #fee;
-  border: 1px solid #fcc;
-  color: #c33;
+  background: rgba(255, 92, 117, 0.16);
+  border: 1px solid rgba(255, 92, 117, 0.32);
+  color: white;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
@@ -81,11 +90,11 @@
 }
 
 .error-message button {
-  background: #c33;
+  background: #ff5c75;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 999px;
   cursor: pointer;
 }
 
@@ -96,7 +105,7 @@
 .loading-message {
   text-align: center;
   padding: 2rem;
-  color: #666;
+  color: rgba(255,255,255,0.72);
   font-style: italic;
 }
 
@@ -105,30 +114,33 @@
   display: flex;
   gap: 1rem;
   padding: 1rem 2rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px);
 }
 
 .stat-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.70);
   padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.54);
+  box-shadow: 0 18px 44px rgba(0,0,0,0.14);
   text-align: center;
   min-width: 120px;
+  backdrop-filter: blur(18px);
 }
 
 .stat-card h3 {
   margin: 0 0 0.5rem 0;
   font-size: 0.9rem;
-  color: #666;
+  color: rgba(23, 32, 51, 0.62);
   font-weight: 500;
 }
 
 .stat-number {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #333;
+  color: #172033;
 }
 
 /* Controls */
@@ -137,7 +149,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .search-controls {
@@ -150,31 +163,37 @@
   flex: 1;
   max-width: 400px;
   padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.42);
+  border-radius: 999px;
   font-size: 1rem;
+  background: rgba(255,255,255,0.72);
+  color: #172033;
 }
 
 .status-filter {
   padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.42);
+  border-radius: 999px;
   font-size: 1rem;
   min-width: 120px;
+  background: rgba(255,255,255,0.72);
+  color: #172033;
 }
 
 .export-btn {
-  background: #007bff;
+  background: linear-gradient(135deg, #ffb84d, #ff5c75);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  padding: 0.62rem 1rem;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 1rem;
+  box-shadow: 0 16px 38px rgba(255, 92, 117, 0.28);
 }
 
 .export-btn:hover {
-  background: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 20px 48px rgba(255, 92, 117, 0.34);
 }
 
 /* Main Content */
@@ -187,7 +206,7 @@
 /* Request List */
 .request-list {
   width: 400px;
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
   display: flex;
   flex-direction: column;
 }
@@ -195,15 +214,15 @@
 .request-list h3 {
   margin: 0;
   padding: 1rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
-  color: #333;
+  background: rgba(255, 255, 255, 0.10);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  color: white;
 }
 
 .no-requests {
   padding: 2rem;
   text-align: center;
-  color: #666;
+  color: rgba(255,255,255,0.74);
   font-style: italic;
 }
 
@@ -214,18 +233,19 @@
 
 .request-item {
   padding: 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   cursor: pointer;
   transition: background-color 0.2s;
+  color: white;
 }
 
 .request-item:hover {
-  background: #f8f9fa;
+  background: rgba(255, 255, 255, 0.10);
 }
 
 .request-item.selected {
-  background: #e3f2fd;
-  border-left: 4px solid #2196f3;
+  background: rgba(255, 255, 255, 0.18);
+  border-left: 4px solid #33d6c5;
 }
 
 .request-item-header {
@@ -238,13 +258,13 @@
 .request-id {
   font-family: monospace;
   font-size: 0.9rem;
-  color: #666;
+  color: rgba(255,255,255,0.68);
 }
 
 .request-status {
   color: white;
   padding: 0.2rem 0.5rem;
-  border-radius: 12px;
+  border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 500;
   text-transform: capitalize;
@@ -258,11 +278,11 @@
 
 .customer-name {
   font-weight: 500;
-  color: #333;
+  color: white;
 }
 
 .request-text {
-  color: #666;
+  color: rgba(255,255,255,0.74);
   font-size: 0.9rem;
   font-style: italic;
   overflow: hidden;
@@ -271,7 +291,7 @@
 }
 
 .request-date {
-  color: #999;
+  color: rgba(255,255,255,0.54);
   font-size: 0.8rem;
 }
 
@@ -283,18 +303,47 @@
   overflow: hidden;
 }
 
+.empty-detail {
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.empty-detail-card {
+  max-width: 460px;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(255,255,255,0.58);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(22px);
+}
+
+.empty-detail-card h3 {
+  margin: 0 0 0.75rem;
+  color: #172033;
+}
+
+.empty-detail-card p {
+  margin: 0;
+  color: rgba(23, 32, 51, 0.68);
+  line-height: 1.6;
+}
+
 .request-detail-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.10);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .request-detail-header h3 {
   margin: 0;
-  color: #333;
+  color: white;
 }
 
 .request-actions {
@@ -305,35 +354,37 @@
 
 .status-select {
   padding: 0.25rem 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.42);
+  border-radius: 999px;
   font-size: 0.9rem;
+  background: rgba(255,255,255,0.78);
+  color: #172033;
 }
 
 .modify-btn, .cancel-btn {
   padding: 0.25rem 0.75rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 0.9rem;
 }
 
 .modify-btn {
-  background: #28a745;
+  background: #1c9a8a;
   color: white;
 }
 
 .modify-btn:hover:not(:disabled) {
-  background: #218838;
+  background: #157d71;
 }
 
 .cancel-btn {
-  background: #dc3545;
+  background: #ff5c75;
   color: white;
 }
 
 .cancel-btn:hover:not(:disabled) {
-  background: #c82333;
+  background: #d8465d;
 }
 
 .modify-btn:disabled, .cancel-btn:disabled {
@@ -345,17 +396,23 @@
 .request-detail-content {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.42);
 }
 
 .detail-section {
   margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(255,255,255,0.58);
+  border-radius: 18px;
+  padding: 1.25rem;
+  box-shadow: 0 18px 48px rgba(23, 32, 51, 0.10);
 }
 
 .detail-section h4 {
   margin: 0 0 1rem 0;
-  color: #333;
-  border-bottom: 1px solid #e0e0e0;
+  color: #172033;
+  border-bottom: 1px solid rgba(23, 32, 51, 0.10);
   padding-bottom: 0.5rem;
 }
 
@@ -373,19 +430,20 @@
 
 .detail-item label {
   font-weight: 500;
-  color: #666;
+  color: rgba(23, 32, 51, 0.62);
   font-size: 0.9rem;
 }
 
 .detail-item span {
-  color: #333;
+  color: #172033;
 }
 
 .detail-image {
   max-width: 300px;
   max-height: 300px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.58);
+  border-radius: 16px;
+  box-shadow: 0 16px 42px rgba(23, 32, 51, 0.14);
 }
 
 /* Modal and Dialog */
@@ -395,7 +453,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(12, 18, 32, 0.62);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -403,22 +462,24 @@
 }
 
 .confirmation-dialog {
-  background: white;
+  background: rgba(255, 255, 255, 0.82);
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.58);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.30);
+  backdrop-filter: blur(22px);
   max-width: 400px;
   width: 90%;
 }
 
 .confirmation-dialog h3 {
   margin: 0 0 1rem 0;
-  color: #333;
+  color: #172033;
 }
 
 .confirmation-dialog p {
   margin: 0 0 1.5rem 0;
-  color: #666;
+  color: rgba(23, 32, 51, 0.70);
   line-height: 1.5;
 }
 
@@ -431,13 +492,13 @@
 .cancel-dialog-btn, .confirm-dialog-btn {
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 1rem;
 }
 
 .cancel-dialog-btn {
-  background: #6c757d;
+  background: #56616f;
   color: white;
 }
 
@@ -446,7 +507,7 @@
 }
 
 .confirm-dialog-btn {
-  background: #dc3545;
+  background: #ff5c75;
   color: white;
 }
 

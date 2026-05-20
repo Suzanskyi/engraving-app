@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Step1Upload from './components/Step1Upload';
 import Step2Customize from './components/Step2Customize';
@@ -10,11 +10,54 @@ import './App.css';
 const AppContainer = styled.div`
   min-height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 184, 77, 0.36), transparent 26%),
+    radial-gradient(circle at 88% 14%, rgba(51, 214, 197, 0.32), transparent 30%),
+    radial-gradient(circle at 68% 88%, rgba(255, 92, 117, 0.24), transparent 28%),
+    linear-gradient(135deg, #151a2e 0%, #23404b 46%, #20263d 100%);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+
+  &::before,
+  &::after {
+    content: '';
+    position: fixed;
+    inset: -20%;
+    z-index: -2;
+    pointer-events: none;
+  }
+
+  &::before {
+    background:
+      linear-gradient(115deg, transparent 0 22%, rgba(255, 255, 255, 0.12) 22% 24%, transparent 24% 52%, rgba(51, 214, 197, 0.14) 52% 54%, transparent 54%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 92px);
+    opacity: 0.65;
+    animation: driftPanels 24s ease-in-out infinite alternate;
+  }
+
+  &::after {
+    z-index: -1;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.08), transparent 35%),
+      repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.10) 0 1px, transparent 1px 28px);
+    mix-blend-mode: screen;
+    opacity: 0.32;
+    animation: shimmerField 18s linear infinite;
+  }
+
+  @keyframes driftPanels {
+    from { transform: translate3d(-2%, -1%, 0) rotate(-2deg); }
+    to { transform: translate3d(2%, 1%, 0) rotate(2deg); }
+  }
+
+  @keyframes shimmerField {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(4%, -3%, 0); }
+  }
 `;
 
 const MainContent = styled.main`
@@ -22,18 +65,24 @@ const MainContent = styled.main`
   width: 100%;
   display: flex;
   flex-direction: column;
+  padding-bottom: 2rem;
 `;
 
 const StepIndicator = styled.div`
   display: flex;
   justify-content: center;
-  margin: 1rem 0;
+  margin: 1.25rem auto 0;
   gap: 0.75rem;
   padding: 0 2rem;
   width: 100%;
   max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+
+  @media (max-width: 720px) {
+    padding: 0 1rem;
+    gap: 0.45rem;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
 `;
 
 const Step = styled.div.withConfig({
@@ -42,13 +91,17 @@ const Step = styled.div.withConfig({
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  background: ${props => props.active ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.2)'};
-  color: ${props => props.active ? '#333' : 'white'};
+  padding: 0.62rem 1rem;
+  border-radius: 999px;
+  border: 1px solid ${props => props.active ? 'rgba(255, 255, 255, 0.72)' : 'rgba(255, 255, 255, 0.22)'};
+  background: ${props => props.active ? 'rgba(255, 255, 255, 0.82)' : 'rgba(255, 255, 255, 0.12)'};
+  color: ${props => props.active ? '#172033' : 'rgba(255,255,255,0.86)'};
   font-weight: ${props => props.active ? '600' : '400'};
   font-size: 0.9rem;
-  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: ${props => props.active ? '0 16px 42px rgba(0,0,0,0.18)' : 'none'};
+  backdrop-filter: blur(22px) saturate(160%);
+  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
   
   &:hover {
     transform: translateY(-1px);
@@ -61,7 +114,7 @@ const StepNumber = styled.span.withConfig({
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: ${props => props.active ? '#667eea' : 'rgba(255, 255, 255, 0.3)'};
+  background: ${props => props.active ? 'linear-gradient(135deg, #ffb84d, #ff5c75)' : 'rgba(255, 255, 255, 0.24)'};
   color: white;
   display: flex;
   align-items: center;

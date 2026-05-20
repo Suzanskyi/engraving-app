@@ -8,9 +8,10 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   overflow-x: hidden;
   max-width: none;
+  background: #151a2e;
 }
 
 #root {
@@ -30,6 +31,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   max-width: none;
   overflow-x: hidden;
+  color: #172033;
 }
 
 code {
@@ -49,27 +51,25 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: transparent;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: rgba(255,255,255,0.4);
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 3px solid rgba(255, 184, 77, 0.38);
+  outline-offset: 3px;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #151a2e;
   }
   a:hover {
     color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
   }
 }

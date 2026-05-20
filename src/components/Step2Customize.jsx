@@ -4,7 +4,7 @@ import { Upload, ArrowRight, ArrowLeft } from 'lucide-react';
 import TextOverlay from './TextOverlay';
 
 const StepContainer = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.14);
   width: 100%;
   min-height: calc(100vh - 200px);
   padding: 2rem;
@@ -26,19 +26,31 @@ const ContentWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.78), rgba(255,255,255,0.45));
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(26px) saturate(170%);
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1.25rem;
+    border-radius: 20px;
+  }
 `;
 
 const StepTitle = styled.h2`
   text-align: center;
-  color: #333;
-  font-size: 2.5rem;
-  margin: 1rem 0 2rem 0;
+  color: #172033;
+  font-size: clamp(2rem, 4vw, 3.35rem);
+  margin: 0.25rem 0 0.75rem 0;
   font-weight: 700;
+  letter-spacing: 0;
 `;
 
 const StepDescription = styled.p`
   text-align: center;
-  color: #666;
+  color: rgba(23, 32, 51, 0.72);
   font-size: 1.1rem;
   margin-bottom: 2rem;
   line-height: 1.6;
@@ -69,7 +81,7 @@ const ImagePreviewSection = styled.div`
 `;
 
 const PreviewTitle = styled.h3`
-  color: #333;
+  color: #172033;
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   font-weight: 600;
@@ -82,6 +94,12 @@ const PreviewContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.42);
+  border: 1px solid rgba(255,255,255,0.48);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 24px 60px rgba(23, 32, 51, 0.12);
+  overflow: auto;
 `;
 
 const CustomizationSection = styled.div`
@@ -92,7 +110,7 @@ const CustomizationSection = styled.div`
 `;
 
 const SectionTitle = styled.h3`
-  color: #333;
+  color: #172033;
   font-size: 1.5rem;
   margin-bottom: 1rem;
   font-weight: 600;
@@ -101,50 +119,58 @@ const SectionTitle = styled.h3`
 const TextInput = styled.input`
   width: 100%;
   padding: 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border: 1px solid rgba(23, 32, 51, 0.12);
+  border-radius: 14px;
   font-size: 1rem;
   font-family: inherit;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   box-sizing: border-box;
+  background: rgba(255,255,255,0.68);
+  color: #172033;
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #33d6c5;
+    box-shadow: 0 0 0 4px rgba(51, 214, 197, 0.16);
+    background: rgba(255,255,255,0.92);
   }
 `;
 
 const FontSelect = styled.select`
   width: 100%;
   padding: 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border: 1px solid rgba(23, 32, 51, 0.12);
+  border-radius: 14px;
   font-size: 1rem;
   font-family: inherit;
-  background: white;
+  background: rgba(255,255,255,0.68);
   cursor: pointer;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   box-sizing: border-box;
+  color: #172033;
   
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #33d6c5;
+    box-shadow: 0 0 0 4px rgba(51, 214, 197, 0.16);
+    background: rgba(255,255,255,0.92);
   }
 `;
 
 const UploadCard = styled.div`
-  border: 2px dashed #ddd;
-  border-radius: 16px;
+  border: 1px dashed rgba(23, 32, 51, 0.2);
+  border-radius: 18px;
   padding: 2rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: white;
+  background: rgba(255, 255, 255, 0.54);
+  box-shadow: 0 16px 44px rgba(23, 32, 51, 0.08);
   
   &:hover {
-    border-color: #667eea;
+    border-color: #33d6c5;
     transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 24px 64px rgba(22, 69, 80, 0.16);
   }
 `;
 
@@ -152,33 +178,35 @@ const UploadIcon = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: #f0f0f0;
+  background: linear-gradient(135deg, rgba(51, 214, 197, 0.18), rgba(255, 184, 77, 0.22));
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
   
   svg {
-    color: #999;
+    color: #23404b;
   }
 `;
 
 const Instructions = styled.div`
-  background: #f8f9fa;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.52);
+  border-radius: 16px;
   padding: 1.5rem;
-  border-left: 4px solid #667eea;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-left: 4px solid #33d6c5;
+  box-shadow: 0 14px 40px rgba(23, 32, 51, 0.08);
 `;
 
 const InstructionsTitle = styled.h4`
-  color: #333;
+  color: #172033;
   font-size: 1.1rem;
   margin-bottom: 0.75rem;
   font-weight: 600;
 `;
 
 const InstructionsText = styled.p`
-  color: #666;
+  color: rgba(23, 32, 51, 0.68);
   font-size: 0.9rem;
   line-height: 1.5;
   margin-bottom: 0.5rem;
@@ -196,22 +224,24 @@ const ButtonContainer = styled.div`
 `;
 
 const Button = styled.button`
-  background: ${props => props.variant === 'secondary' ? 'transparent' : 'linear-gradient(135deg, #667eea, #764ba2)'};
-  color: ${props => props.variant === 'secondary' ? '#667eea' : 'white'};
-  border: 2px solid #667eea;
+  background: ${props => props.variant === 'secondary' ? 'rgba(255,255,255,0.42)' : 'linear-gradient(135deg, #ffb84d, #ff5c75)'};
+  color: ${props => props.variant === 'secondary' ? '#172033' : 'white'};
+  border: 1px solid ${props => props.variant === 'secondary' ? 'rgba(23, 32, 51, 0.14)' : 'rgba(255, 255, 255, 0.12)'};
   padding: 1rem 2rem;
-  border-radius: 50px;
+  border-radius: 999px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, background 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   
+  box-shadow: ${props => props.variant === 'secondary' ? '0 12px 30px rgba(23, 32, 51, 0.08)' : '0 18px 42px rgba(255, 92, 117, 0.28)'};
+
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: ${props => props.variant === 'secondary' ? '0 18px 42px rgba(23, 32, 51, 0.12)' : '0 24px 56px rgba(255, 92, 117, 0.34)'};
   }
   
   &:disabled {
@@ -226,7 +256,7 @@ const Button = styled.button`
 const Step2Customize = ({ data, onUpdate, onNext, onPrev }) => {
   // Simplified state - no complex dragging/resizing state needed
   const [composedImage, setComposedImage] = useState(data.composedImage || null);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating] = useState(false);
 
   const fonts = [
     { name: 'Arial', value: 'arial' },

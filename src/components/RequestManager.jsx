@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { RequestStorage } from '../services/index.js';
 import './RequestManager.css';
 
-const RequestManager = ({ onClose, onModifyRequest, onNavigateToMain }) => {
+const RequestManager = ({ onModifyRequest, onNavigateToMain }) => {
   const [requests, setRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -234,7 +234,7 @@ const RequestManager = ({ onClose, onModifyRequest, onNavigateToMain }) => {
         </div>
 
         {/* Request Detail View */}
-        {selectedRequest && (
+        {selectedRequest ? (
           <div className="request-detail">
             <div className="request-detail-header">
               <h3>Request Details</h3>
@@ -355,6 +355,13 @@ const RequestManager = ({ onClose, onModifyRequest, onNavigateToMain }) => {
                   )}
                 </div>
               )}
+            </div>
+          </div>
+        ) : (
+          <div className="request-detail empty-detail">
+            <div className="empty-detail-card">
+              <h3>Select a request</h3>
+              <p>Choose an order from the list to review customer details, engraving settings, and preview images.</p>
             </div>
           </div>
         )}

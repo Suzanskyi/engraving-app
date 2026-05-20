@@ -4,7 +4,7 @@ import { ArrowLeft, Send, Eye, Copy, CheckCircle } from 'lucide-react';
 import { RequestStorage, ImageComposer } from '../services/index.js';
 
 const StepContainer = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.14);
   width: 100%;
   min-height: calc(100vh - 200px);
   padding: 2rem;
@@ -21,19 +21,31 @@ const ContentWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.78), rgba(255,255,255,0.45));
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(26px) saturate(170%);
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1.25rem;
+    border-radius: 20px;
+  }
 `;
 
 const StepTitle = styled.h2`
   text-align: center;
-  color: #333;
-  font-size: 2.5rem;
-  margin: 1rem 0 2rem 0;
+  color: #172033;
+  font-size: clamp(2rem, 4vw, 3.35rem);
+  margin: 0.25rem 0 0.75rem 0;
   font-weight: 700;
+  letter-spacing: 0;
 `;
 
 const StepDescription = styled.p`
   text-align: center;
-  color: #666;
+  color: rgba(23, 32, 51, 0.72);
   font-size: 1.1rem;
   margin-bottom: 2rem;
   line-height: 1.6;
@@ -55,14 +67,16 @@ const ContentGrid = styled.div`
 `;
 
 const Section = styled.div`
-  background: #f8f9fa;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.54);
+  border-radius: 18px;
   padding: 2rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba(255,255,255,0.55);
+  box-shadow: 0 18px 48px rgba(23, 32, 51, 0.10);
+  backdrop-filter: blur(18px);
 `;
 
 const SectionTitle = styled.h3`
-  color: #333;
+  color: #172033;
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   font-weight: 600;
@@ -77,7 +91,7 @@ const FormGroup = styled.div`
 
 const Label = styled.label`
   display: block;
-  color: #333;
+  color: #172033;
   font-weight: 600;
   margin-bottom: 0.5rem;
 `;
@@ -85,16 +99,21 @@ const Label = styled.label`
 const Input = styled.input`
   width: 100%;
   padding: 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border: 1px solid rgba(23, 32, 51, 0.12);
+  border-radius: 14px;
   font-size: 1rem;
   font-family: inherit;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   box-sizing: border-box;
   
+  background: rgba(255,255,255,0.68);
+  color: #172033;
+
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #33d6c5;
+    box-shadow: 0 0 0 4px rgba(51, 214, 197, 0.16);
+    background: rgba(255,255,255,0.92);
   }
 `;
 
@@ -102,17 +121,22 @@ const Textarea = styled.textarea`
   width: 100%;
   min-height: 120px;
   padding: 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border: 1px solid rgba(23, 32, 51, 0.12);
+  border-radius: 14px;
   font-size: 1rem;
   font-family: inherit;
   resize: vertical;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   box-sizing: border-box;
   
+  background: rgba(255,255,255,0.68);
+  color: #172033;
+
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #33d6c5;
+    box-shadow: 0 0 0 4px rgba(51, 214, 197, 0.16);
+    background: rgba(255,255,255,0.92);
   }
 `;
 
@@ -127,7 +151,7 @@ const SummaryItem = styled.li`
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 0;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid rgba(23, 32, 51, 0.10);
   
   &:last-child {
     border-bottom: none;
@@ -135,25 +159,27 @@ const SummaryItem = styled.li`
 `;
 
 const SummaryLabel = styled.span`
-  color: #666;
+  color: rgba(23, 32, 51, 0.62);
   font-weight: 500;
 `;
 
 const SummaryValue = styled.span`
-  color: #333;
+  color: #172033;
   font-weight: 600;
 `;
 
 const FinalPreviewSection = styled.div`
   margin-bottom: 2rem;
-  background: #f8f9fa;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.54);
+  border-radius: 18px;
   padding: 2rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba(255,255,255,0.55);
+  box-shadow: 0 18px 48px rgba(23, 32, 51, 0.10);
+  backdrop-filter: blur(18px);
 `;
 
 const PreviewTitle = styled.h3`
-  color: #333;
+  color: #172033;
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   font-weight: 600;
@@ -166,10 +192,11 @@ const PreviewContainer = styled.div`
   position: relative;
   max-width: 100%;
   max-height: 500px;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.55);
+  border-radius: 18px;
   overflow: hidden;
-  background: white;
+  background: rgba(255,255,255,0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.76);
   margin: 0 auto;
 `;
 
@@ -191,22 +218,24 @@ const ButtonContainer = styled.div`
 `;
 
 const Button = styled.button`
-  background: ${props => props.variant === 'secondary' ? 'transparent' : 'linear-gradient(135deg, #667eea, #764ba2)'};
-  color: ${props => props.variant === 'secondary' ? '#667eea' : 'white'};
-  border: 2px solid #667eea;
+  background: ${props => props.variant === 'secondary' ? 'rgba(255,255,255,0.42)' : 'linear-gradient(135deg, #ffb84d, #ff5c75)'};
+  color: ${props => props.variant === 'secondary' ? '#172033' : 'white'};
+  border: 1px solid ${props => props.variant === 'secondary' ? 'rgba(23, 32, 51, 0.14)' : 'rgba(255, 255, 255, 0.12)'};
   padding: 1rem 2rem;
-  border-radius: 50px;
+  border-radius: 999px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, background 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   
+  box-shadow: ${props => props.variant === 'secondary' ? '0 12px 30px rgba(23, 32, 51, 0.08)' : '0 18px 42px rgba(255, 92, 117, 0.28)'};
+
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: ${props => props.variant === 'secondary' ? '0 18px 42px rgba(23, 32, 51, 0.12)' : '0 24px 56px rgba(255, 92, 117, 0.34)'};
   }
   
   &:disabled {
@@ -217,34 +246,39 @@ const Button = styled.button`
 `;
 
 const SuccessMessage = styled.div`
-  background: linear-gradient(135deg, #28a745, #20c997);
+  background: linear-gradient(135deg, #1c9a8a, #33d6c5);
   color: white;
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: 16px;
   text-align: center;
   margin-bottom: 1rem;
   font-weight: 600;
   font-size: 1.1rem;
+  border: 1px solid rgba(255,255,255,0.32);
+  box-shadow: 0 18px 50px rgba(28, 154, 138, 0.24);
 `;
 
 const ErrorMessage = styled.div`
-  background: linear-gradient(135deg, #dc3545, #c82333);
+  background: linear-gradient(135deg, #ff5c75, #b92d48);
   color: white;
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: 16px;
   text-align: center;
   margin-bottom: 1rem;
   font-weight: 600;
   font-size: 1.1rem;
+  border: 1px solid rgba(255,255,255,0.32);
+  box-shadow: 0 18px 50px rgba(185, 45, 72, 0.22);
 `;
 
 const RequestIdContainer = styled.div`
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(23, 32, 51, 0.68);
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 1.5rem;
   margin: 1.5rem 0;
   text-align: center;
+  backdrop-filter: blur(18px);
 `;
 
 const RequestIdLabel = styled.div`
@@ -265,11 +299,11 @@ const RequestIdValue = styled.div`
 `;
 
 const CopyButton = styled.button`
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 999px;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -284,11 +318,13 @@ const CopyButton = styled.button`
 `;
 
 const RequestDetails = styled.div`
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  background: rgba(23, 32, 51, 0.68);
+  border-radius: 18px;
   padding: 1.5rem;
   margin: 1.5rem 0;
   text-align: left;
+  border: 1px solid rgba(255,255,255,0.22);
+  backdrop-filter: blur(18px);
 `;
 
 const DetailRow = styled.div`

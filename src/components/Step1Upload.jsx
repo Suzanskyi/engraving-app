@@ -4,7 +4,7 @@ import { useDropzone } from 'react-dropzone';
 import { Upload, Image, Type, ArrowRight, Info, CheckCircle } from 'lucide-react';
 
 const StepContainer = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.14);
   width: 100%;
   min-height: calc(100vh - 200px);
   padding: 2rem;
@@ -21,21 +21,33 @@ const ContentWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.78), rgba(255,255,255,0.45));
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(26px) saturate(170%);
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1.25rem;
+    border-radius: 20px;
+  }
 `;
 
 const StepTitle = styled.h2`
   text-align: center;
-  color: #333;
-  font-size: 2.5rem;
-  margin: 1rem 0 2rem 0;
+  color: #172033;
+  font-size: clamp(2rem, 4vw, 3.35rem);
+  margin: 0.25rem 0 0.75rem 0;
   font-weight: 700;
+  letter-spacing: 0;
 `;
 
 const StepDescription = styled.p`
   text-align: center;
-  color: #666;
+  color: rgba(23, 32, 51, 0.72);
   font-size: 1.1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   line-height: 1.6;
   max-width: 800px;
   margin-left: auto;
@@ -43,12 +55,14 @@ const StepDescription = styled.p`
 `;
 
 const RequirementsSection = styled.div`
-  background: linear-gradient(135deg, #28a745, #20c997);
+  background: linear-gradient(135deg, rgba(28, 154, 138, 0.92), rgba(255, 184, 77, 0.82));
   color: white;
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 1.5rem;
   margin: 0 0 2rem 0;
   text-align: center;
+  border: 1px solid rgba(255,255,255,0.34);
+  box-shadow: 0 18px 50px rgba(31, 94, 92, 0.24);
 `;
 
 const RequirementsTitle = styled.h3`
@@ -76,10 +90,11 @@ const RequirementItem = styled.li`
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
   backdrop-filter: blur(10px);
   font-size: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.16);
   
   svg {
     color: #ffffff;
@@ -104,24 +119,26 @@ const UploadSection = styled.div`
 const UploadCard = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== 'active'
 })`
-  border: 2px dashed ${props => props.active ? '#667eea' : '#ddd'};
-  border-radius: 12px;
+  border: 1px solid ${props => props.active ? 'rgba(255, 92, 117, 0.68)' : 'rgba(255,255,255,0.42)'};
+  border-radius: 20px;
   padding: 1.5rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: ${props => props.active ? 'rgba(102, 126, 234, 0.05)' : 'white'};
+  background: ${props => props.active ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 238, 222, 0.68))' : 'rgba(255, 255, 255, 0.58)'};
   flex: 1;
   box-sizing: border-box;
   min-height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  box-shadow: ${props => props.active ? '0 24px 60px rgba(255, 92, 117, 0.16)' : '0 16px 48px rgba(23, 32, 51, 0.10)'};
+  backdrop-filter: blur(20px) saturate(150%);
   
   &:hover {
-    border-color: #667eea;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+    border-color: rgba(51, 214, 197, 0.8);
+    transform: translateY(-4px);
+    box-shadow: 0 24px 70px rgba(22, 69, 80, 0.18);
   }
 `;
 
@@ -131,7 +148,7 @@ const UploadIcon = styled.div.withConfig({
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: ${props => props.active ? '#667eea' : '#f0f0f0'};
+  background: ${props => props.active ? 'linear-gradient(135deg, #ffb84d, #ff5c75)' : 'rgba(23, 32, 51, 0.08)'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -139,41 +156,41 @@ const UploadIcon = styled.div.withConfig({
   transition: all 0.3s ease;
   
   svg {
-    color: ${props => props.active ? 'white' : '#999'};
+    color: ${props => props.active ? 'white' : 'rgba(23, 32, 51, 0.58)'};
   }
 `;
 
 const UploadTitle = styled.h3`
-  color: #333;
+  color: #172033;
   font-size: 1.1rem;
   margin-bottom: 0.4rem;
   font-weight: 600;
 `;
 
 const UploadDescription = styled.p`
-  color: #666;
+  color: rgba(23, 32, 51, 0.68);
   font-size: 0.85rem;
   line-height: 1.4;
   margin-bottom: 0.75rem;
 `;
 
 const UploadExamples = styled.div`
-  background: #f8f9fa;
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.42);
+  border-radius: 12px;
   padding: 0.75rem;
   margin-top: 0.75rem;
   text-align: left;
 `;
 
 const ExamplesTitle = styled.h4`
-  color: #333;
+  color: #172033;
   font-size: 0.8rem;
   margin-bottom: 0.4rem;
   font-weight: 600;
 `;
 
 const ExamplesList = styled.ul`
-  color: #666;
+  color: rgba(23, 32, 51, 0.68);
   font-size: 0.75rem;
   margin: 0;
   padding-left: 1rem;
@@ -186,8 +203,8 @@ const ImagePreview = styled.div`
   img {
     max-width: 100%;
     max-height: 200px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
   }
 `;
 
@@ -195,40 +212,47 @@ const TextInput = styled.textarea`
   width: 100%;
   min-height: 120px;
   padding: 0.75rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px solid rgba(23, 32, 51, 0.12);
+  border-radius: 14px;
   font-size: 0.9rem;
   font-family: inherit;
   resize: vertical;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   box-sizing: border-box;
   flex: 1;
   margin-top: auto;
   
+  background: rgba(255,255,255,0.66);
+  color: #172033;
+
   &:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #33d6c5;
+    box-shadow: 0 0 0 4px rgba(51, 214, 197, 0.16);
+    background: rgba(255,255,255,0.9);
   }
 `;
 
 const NextButton = styled.button`
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #ffb84d, #ff5c75);
   color: white;
   border: none;
   padding: 1rem 2.5rem;
-  border-radius: 50px;
+  border-radius: 999px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin: 0 auto 1rem;
   
+  box-shadow: 0 18px 42px rgba(255, 92, 117, 0.28);
+
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 24px 56px rgba(255, 92, 117, 0.34);
   }
   
   &:disabled {
@@ -256,20 +280,20 @@ const OrCircle = styled.div`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #33d6c5, #ffb84d);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 1rem;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 12px 34px rgba(23, 32, 51, 0.18);
 `;
 
 const OrLine = styled.div`
   width: 2px;
   height: 30px;
-  background: linear-gradient(to bottom, transparent, #ddd, transparent);
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.65), transparent);
   margin: 0.5rem 0;
 `;
 

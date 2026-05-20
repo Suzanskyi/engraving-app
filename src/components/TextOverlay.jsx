@@ -174,6 +174,7 @@ const TextOverlay = ({
         // Clear canvas with smooth fade
         ctx.globalAlpha = fadeOpacity;
         ctx.clearRect(0, 0, width, height);
+        renderCanvasBase();
 
         // Render background
         if (imageUrl && cachedImage && imageLoaded) {
@@ -207,9 +208,15 @@ const TextOverlay = ({
         
         ctx.globalAlpha = 1;
 
-        function renderPlaceholder() {
-            ctx.fillStyle = '#eef4f3';
+        function renderCanvasBase() {
+            const baseGradient = ctx.createLinearGradient(0, 0, width, height);
+            baseGradient.addColorStop(0, 'rgba(238, 244, 243, 0.72)');
+            baseGradient.addColorStop(1, 'rgba(51, 214, 197, 0.16)');
+            ctx.fillStyle = baseGradient;
             ctx.fillRect(0, 0, width, height);
+        }
+
+        function renderPlaceholder() {
             ctx.font = '16px Arial';
             ctx.fillStyle = '#62727c';
             ctx.textAlign = 'center';
@@ -553,7 +560,7 @@ const TextOverlay = ({
             style={{
                 border: `1px solid ${isHovering || isDragging || isResizing ? '#33d6c5' : 'rgba(255,255,255,0.58)'}`,
                 borderRadius: '18px',
-                background: 'rgba(255,255,255,0.72)',
+                background: 'linear-gradient(135deg, rgba(238, 244, 243, 0.56), rgba(51, 214, 197, 0.12))',
                 transition: 'all 0.3s ease',
                 boxShadow: isHovering || isDragging || isResizing 
                     ? '0 22px 58px rgba(51, 214, 197, 0.18)' 

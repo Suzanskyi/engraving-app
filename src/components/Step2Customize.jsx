@@ -77,7 +77,8 @@ const ImagePreviewSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 0.5rem;
 `;
 
 const PreviewTitle = styled.h3`
@@ -90,13 +91,13 @@ const PreviewTitle = styled.h3`
 const PreviewContainer = styled.div`
   position: relative;
   max-width: 100%;
-  max-height: 500px;
+  max-height: 460px;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 1rem;
   border-radius: 22px;
-  background: rgba(255,255,255,0.42);
+  background: linear-gradient(135deg, rgba(255,255,255,0.28), rgba(51, 214, 197, 0.10));
   border: 1px solid rgba(255,255,255,0.48);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 24px 60px rgba(23, 32, 51, 0.12);
   overflow: auto;
@@ -107,6 +108,12 @@ const CustomizationSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+`;
+
+const ControlPanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const SectionTitle = styled.h3`
@@ -154,6 +161,36 @@ const FontSelect = styled.select`
     border-color: #33d6c5;
     box-shadow: 0 0 0 4px rgba(51, 214, 197, 0.16);
     background: rgba(255,255,255,0.92);
+  }
+`;
+
+const RangeControl = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.54);
+  box-shadow: 0 12px 32px rgba(23, 32, 51, 0.08);
+
+  label {
+    grid-column: 1 / -1;
+    color: #172033;
+    font-weight: 700;
+  }
+
+  input {
+    width: 100%;
+    accent-color: #33d6c5;
+  }
+
+  span {
+    color: rgba(23, 32, 51, 0.68);
+    font-weight: 700;
+    min-width: 52px;
+    text-align: right;
   }
 `;
 
@@ -367,32 +404,47 @@ const Step2Customize = ({ data, onUpdate, onNext, onPrev }) => {
           <CustomizationSection>
             <SectionTitle>Text Customization</SectionTitle>
 
-            <TextInput
-              type="text"
-              placeholder="Enter your custom text..."
-              value={data.customText}
-              onChange={(e) => {
-                onUpdate({ customText: e.target.value });
-              }}
-              style={{
-                transition: 'all 0.3s ease',
-                borderColor: data.customText ? '#667eea' : '#e0e0e0',
-                boxShadow: data.customText ? '0 0 0 3px rgba(102, 126, 234, 0.1)' : 'none'
-              }}
-            />
+            <ControlPanel>
+              <TextInput
+                type="text"
+                placeholder="Enter your custom text..."
+                value={data.customText}
+                onChange={(e) => {
+                  onUpdate({ customText: e.target.value });
+                }}
+                style={{
+                  transition: 'all 0.3s ease',
+                  borderColor: data.customText ? '#33d6c5' : 'rgba(23, 32, 51, 0.12)',
+                  boxShadow: data.customText ? '0 0 0 4px rgba(51, 214, 197, 0.14)' : 'none'
+                }}
+              />
 
-            <FontSelect
-              value={data.font}
-              onChange={(e) => {
-                onUpdate({ font: e.target.value });
-              }}
-            >
-              {fonts.map(font => (
-                <option key={font.value} value={font.value} style={{ fontFamily: font.name }}>
-                  {font.name}
-                </option>
-              ))}
-            </FontSelect>
+              <FontSelect
+                value={data.font}
+                onChange={(e) => {
+                  onUpdate({ font: e.target.value });
+                }}
+              >
+                {fonts.map(font => (
+                  <option key={font.value} value={font.value} style={{ fontFamily: font.name }}>
+                    {font.name}
+                  </option>
+                ))}
+              </FontSelect>
+
+              <RangeControl>
+                <label htmlFor="font-size">Engraving Size</label>
+                <input
+                  id="font-size"
+                  type="range"
+                  min="12"
+                  max="72"
+                  value={data.fontSize}
+                  onChange={(e) => onUpdate({ fontSize: Number(e.target.value) })}
+                />
+                <span>{Math.round(data.fontSize)}px</span>
+              </RangeControl>
+            </ControlPanel>
 
             <UploadCard>
               <UploadIcon>
@@ -404,7 +456,7 @@ const Step2Customize = ({ data, onUpdate, onNext, onPrev }) => {
             <Instructions>
               <InstructionsTitle>💡 How to Use:</InstructionsTitle>
               <InstructionsText>• <strong>Drag</strong> the text overlay to position it on your object</InstructionsText>
-              <InstructionsText>• <strong>Resize</strong> text by dragging the blue resize handle</InstructionsText>
+              <InstructionsText>• <strong>Resize</strong> text with the size slider or drag the canvas handle</InstructionsText>
               <InstructionsText>• <strong>Choose fonts</strong> from the dropdown menu</InstructionsText>
               <InstructionsText>• <strong>Real-time preview</strong> shows exactly how your text will appear</InstructionsText>
             </Instructions>
